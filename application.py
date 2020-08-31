@@ -4,22 +4,17 @@ from flask_rest_jsonapi import Api, ResourceDetail, ResourceList
 from marshmallow_jsonapi.flask import Schema
 from marshmallow_jsonapi import fields
 
-# Create a new Flask application
 app = Flask(__name__)
 
-# Set up SQLAlchemy
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////tmp/entries.db'
 db = SQLAlchemy(app)
 
-# Define a class for the Entry table
 class Entry(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String)
 
-# Create the table
 db.create_all()
 
-# Create data abstraction layer
 class EntrySchema(Schema):
     class Meta:
         type_ = 'entry'
@@ -29,8 +24,6 @@ class EntrySchema(Schema):
 
     id = fields.Integer()
     name = fields.Str(required=True)
-
-# Create resource managers and endpoints
 
 class EntryMany(ResourceList):
     schema = EntrySchema
@@ -46,6 +39,5 @@ api = Api(app)
 api.route(EntryMany, 'entry_many', '/entries')
 api.route(EntryOne, 'entry_one', '/entries/<int:id>')
 
-# main loop to run app in debug mode
 if __name__ == '__main__':
     app.run(debug=True)
